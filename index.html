@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Buddy</title>
+<style>
+body{margin:0;height:100vh;background:#05080f;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:sans-serif}
+#ball{width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,#7df,#06c);box-shadow:0 0 60px #0af;transition:transform .08s}
+button{margin-top:80px;padding:14px 28px;border:0;border-radius:30px;background:#0af;color:#000;font-size:18px}
+</style>
+</head>
+<body>
+<div id="ball"></div>
+<button id="btn">Tap to start</button>
+<script>
+btn.onclick=async()=>{
+ const s=await navigator.mediaDevices.getUserMedia({audio:true});
+ const c=new AudioContext(),a=c.createAnalyser(),d=new Uint8Array(a.fftSize);
+ c.createMediaStreamSource(s).connect(a);
+ btn.style.display="none";
+ (function loop(){
+  a.getByteTimeDomainData(d);
+  let m=0;for(const v of d)m=Math.max(m,Math.abs(v-128));
+  ball.style.transform="scale("+(1+m/40)+")";
+  requestAnimationFrame(loop);
+ })();
+};
+</script>
+</body>
+</html>
